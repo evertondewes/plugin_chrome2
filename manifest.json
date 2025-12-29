@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Coletor de Links do LinkedIn",
+  "version": "1.0",
+  "description": "Copia URLs de perfis do LinkedIn da página atual para a área de transferência.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {
+    "default_title": "Copiar Links do LinkedIn"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
