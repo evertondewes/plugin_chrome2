@@ -1,7 +1,7 @@
 // This script runs in the background and waits for the user to click the extension's icon.
 
 // Function to be injected into the active tab.
-function scrapeAndCopyLinks() {
+async function scrapeAndCopyLinks() {
   // Find all anchor tags whose href contains "/in/", typical for LinkedIn profiles.
   const profileLinks = document.querySelectorAll('a[href*="/in/"]');
 
@@ -12,18 +12,17 @@ function scrapeAndCopyLinks() {
   const uniqueUrls = new Set([...profileLinks].map(link => link.href.split('?')[0]));
 
   // Convert the Set back to an array and join with newlines.
-  const textToCopy = [...uniqueUrls].join('\n');
+  const newLinksText = [...uniqueUrls].join('\n');
 
-  if (textToCopy) {
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => {
-        // Log success message in the page's console for developer feedback.
-        console.log(`[Coletor de Links] Sucesso! ${uniqueUrls.size} links exclusivos foram copiados.`);
-        // Note: You could expand this to show a visible notification to the user.
-      })
-      .catch(err => {
-        console.error('[Coletor de Links] Falha ao copiar links: ', err);
-      });
+  if (newLinksText) {
+    try {
+      const existingText = await navigator.clipboard.readText();
+      const textToCopy = existingText ? `${existingText}\n${newLinksText}` : newLinksText;
+      await navigator.clipboard.writeText(textToCopy);
+      console.log(`[Coletor de Links] Sucesso! ${uniqueUrls.size} links exclusivos foram adicionados à área de transferência.`);
+    } catch (err) {
+      console.error('[Coletor de Links] Falha ao acessar a área de transferência: ', err);
+    }
   } else {
     console.log('[Coletor de Links] Nenhum link de perfil do LinkedIn encontrado na página.');
   }
